@@ -1,0 +1,14 @@
+
+#authenticate{
+    width:50%;
+    margin-left: 25%;
+    margin-top:50px;
+    margin-bottom:50px;
+    padding:20px;
+    
+}
+
+#authenticate button{
+    width:20%;
+    margin-left: 40%;
+}

@@ -1,0 +1,21 @@
+{
+  "name": "word-search-server",
+  "version": "1.0.0",
+  "description": "An application that allows saving of user word searches through a chrome extension interface",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Terence Wilson",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.1",
+    "bootstrap-icons": "^1.7.2",
+    "dot-env": "^0.0.1",
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "express-mysql-session": "^2.1.7",
+    "express-session": "^1.17.2",
+    "mysql2": "^2.3.3"
+  }
+}

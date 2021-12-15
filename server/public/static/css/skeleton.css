@@ -1,0 +1,15 @@
+#page-wrap{
+    width: 100%;
+    max-width: 100%;
+}
+
+#content-wrap{
+    min-height: 90vh;
+}
+
+#footerWrap {
+  width: 100%;
+  padding:50px 50px 0 50px;
+
+  text-align: center;
+}
