@@ -4,18 +4,30 @@
   "description": "An application that allows saving of user word searches through a chrome extension interface",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon app.js"
   },
   "author": "Terence Wilson",
   "license": "ISC",
   "dependencies": {
+    "base64url": "^3.0.1",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.1",
     "bootstrap-icons": "^1.7.2",
-    "dot-env": "^0.0.1",
+    "cookie-parser": "^1.4.6",
+    "cookie-session": "^1.4.0",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
     "ejs": "^3.1.6",
     "express": "^4.17.1",
     "express-mysql-session": "^2.1.7",
     "express-session": "^1.17.2",
-    "mysql2": "^2.3.3"
+    "express-validator": "^6.14.0",
+    "moment": "^2.29.1",
+    "mysql2": "^2.3.3",
+    "nodemailer": "^6.7.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
   }
 }
