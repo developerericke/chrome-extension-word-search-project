@@ -9,6 +9,7 @@ const {
   login,
   loginPage,
   passwordResetLink,
+  search_api
 } = require("../controllers/userController");
 
 const ifNotLoggedin = (req, res, next) => {
@@ -79,5 +80,7 @@ router.get("/logout", (req, res, next) => {
 });
 
 router.get("/recover/account", passwordResetLink);
+
+router.post('/api/v1/search',search_api)
 
 module.exports = router;

@@ -4,6 +4,7 @@
     "manifest_version": 3,
     "name":"Word Search",
     "version":"1.0.0",
+    "description": "Save word search",
 
     "action": {
         "default_icon": {              
@@ -12,24 +13,29 @@
           "32": "images/logo_32.png"    
         },
         "default_title": "Save word search",  
-        "default_popup": "/htmls/index.html"  
-      },
-
-
-    "author":"Joe doe",
-    "description":"A word search game",
-
-    "scripts":{
-        "main":"scripts/main.js"
+        "default_popup": "popup.html"  
     },
-    "styles":{
-        "main":"scripts/main.css"
+    
+
+    "icons":{ 
+            "16": "images/256_logo.png",
+            "48": "images/256_logo.png",
+            "128": "images/256_logo.png" 
     },
-    "files":[
-        "htmls/index.html",
-        "scripts/main.js",
-        "styles/main.css"
+
+    "background": {
+        "service_worker": "background.js"
+    },
+    "permissions": [
+        
+        "activeTab",
+        "tabs",
+        "notifications"
+     
+    
     ],
-    "icon":"images/logo_32.png"
+    "homepage_url": "http://localhost:8000",
+    "host_permissions": ["https://twitter.com/home","https://www.google.com/*"]
+ 
 
 }

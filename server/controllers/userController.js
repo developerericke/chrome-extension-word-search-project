@@ -3,6 +3,7 @@ require('dotenv').config();
 const {validationResult} = require('express-validator');
 //for encrypting db password
 const bcrypt = require('bcryptjs');
+const request = require('request');
 //connection with the db
 const db = require('../utils/dbConnection');
 
@@ -249,4 +250,44 @@ exports.passwordResetLink = async (req, res, next) => {
     }
     }
  
+}
+
+
+exports.search_api = async (req, res, next) => {
+
+    const {body} = req
+    
+    if (body.keywords == "" || body.keywords == null || body.keywords == undefined){
+        res.status(400).json({"message": "Please enter a search query."});
+    }else{
+        //we have search keyword
+        let user_keyword = body.keywords;
+
+        let words_to_remove = ["a","an","the","is","are","was","were",'meaning','what']
+
+        words_to_remove.forEach((word)=>{
+            if (user_keyword.includes(word)){
+                user_keyword = user_keyword.replace(word,"")
+                user_keyword = user_keyword.replace("  "," ")
+            }
+        })  
+        //goat--cheese
+
+        //we have removed all unnecesary words that can be used to search
+        user_keyword = String(user_keyword).replaceAll(' ','-')
+
+        request('https://api.dictionaryapi.dev/api/v2/entries/en/'+user_keyword, function (error, response, body) {
+                console.error('error:', error); // Print the error if one occurred
+                console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+                console.log('body:', body); // Print the HTML for the Google homepage.
+
+                //save the search keywords to the database
+                //allow login
+                  return res.status(200).json({"message": "Search API"});
+});
+
+
+    }
+
+
 }

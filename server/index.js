@@ -3,6 +3,7 @@ const cookieParser = require('cookie-parser');
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
+const cors = require('cors');
 const routes = require('./routes/routes');
 const app = express();
 var MySQLStore = require('express-mysql-session')(session);
@@ -11,6 +12,8 @@ var MySQLStore = require('express-mysql-session')(session);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+
+app.use(cors())
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
