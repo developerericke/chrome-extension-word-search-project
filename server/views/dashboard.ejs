@@ -1,0 +1,40 @@
+<%- include('header'); -%>
+
+<div id="dashboard">
+  
+    <table class="table text-center table-responsive table-bordered table-hover">
+       <thead>
+                <tr>
+                    <th>Search Word</th>
+                    <th>Meaning Found</th>
+                    <th>Date Searched</th>
+                </tr>
+       </thead>
+       <tbody>
+           <%  searches.forEach((search) => { %>
+
+            
+           <tr>
+               <td><%=search.word%></td>
+               <td><%=search.meaning%></td>
+               <td><%=search.date_searched%></td> 
+            </tr>
+
+            <% }); %>
+
+       </tbody>
+
+    </table>
+
+</div>
+<!-- <div class="container">
+    <nav>
+    <div class="profile">
+        <div class="img">👦</div>
+        <h2><%= user.User_name %></h2>
+        <span><%= user.User_email %></span>
+       
+    </div>
+</nav>
+</div> -->
+<%- include('footer'); -%>

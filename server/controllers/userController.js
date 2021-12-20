@@ -39,30 +39,42 @@ function email_sender_is_active(){
 
 // Home Page
 exports.homePage = async (req, res, next) => {
-    const [row] = await db.execute("SELECT * FROM `T_Users` WHERE `id`=?", [req.session.userID]);
 
+
+    const [row] = await db.execute("SELECT * FROM `T_Users` WHERE `id`=?", [req.session.userID]);
+    const [searches] = await db.execute("SELECT * FROM `T_Searches` WHERE `search_user`=?", [req.session.userID]); 
     if (row.length !== 1) {
         return res.redirect('/logout');
     }
 
-    res.render('home', {
-        user: row[0]
+
+    res.render('dashboard', {
+        user: row[0],
+        searches: searches
     });
 }
 
 // Register Page
 exports.registerPage = (req, res, next) => {
-    res.render("register");
+ //   res.render("authenticate",{auth_type:'signup'});
+ res.render('register')
 };
 
 // User Registration
 exports.register = async (req, res, next) => {
     const errors = validationResult(req);
     const { body } = req;
+   
+
 
     if (!errors.isEmpty()) {
+        let validation_errs = ''
+        errors.array().forEach((err)=>{
+      
+            validation_errs +=  `-  ${err.msg}  <br> `;
+        })
         return res.render('register', {
-            error: errors.array()[0].msg
+            error: validation_errs 
         });
     }
     try {
@@ -73,7 +85,7 @@ exports.register = async (req, res, next) => {
 
         if (row.length >= 1) {
             return res.render('register', {
-                error: 'This email already in use.'
+                error: '- This email already in use.'
             });
         }
         
@@ -84,22 +96,24 @@ exports.register = async (req, res, next) => {
             "INSERT INTO `T_Users`(`User_name`,`User_email`,`User_password`) VALUES(?,?,?)",
             [body._name, body._email, hashPass]
         );
-
+       
         if (rows.affectedRows !== 1) {
             return res.render('register', {
-                error: 'Your registration has failed.'
+                error: ' - Your registration has failed.'//,msg:false
             });
         }
         
         res.render("register", {
-            msg: 'You have successfully registered.'
+            message: 'You have successfully registered.'
         });
     }else{
+        //should be an error ju imefail pia
         res.render("register",{
-            msg: 'Passwords do not match.'
+            error: '- Passwords do not match.'//,msg:false
         })
     }
     } catch (e) {
+        console.log(e)
         next(e);
     }
 };
@@ -109,14 +123,20 @@ exports.loginPage = (req, res, next) => {
     res.render("login");
 };
 
+
+
 // Login User
 exports.login = async (req, res, next) => {
     const errors = validationResult(req);
     const { body } = req;
 
     if (!errors.isEmpty()) {
+        let validation_errors = ''
+        errors.array().forEach((err)=>{
+            validation_errors +=  `-  ${err.msg}  <br> `;
+        })
         return res.render('login', {
-            error: errors.array()[0].msg
+            error: validation_errors
         });
     }
     try {
@@ -124,19 +144,20 @@ exports.login = async (req, res, next) => {
 
         if (row.length != 1) {
             return res.render('login', {
-                error: 'Invalid email address.'
+                error: '- Invalid email address/password combination.'
             });
         }
 
         const checkPass = await bcrypt.compare(body._password, row[0].User_password);
 
         if (checkPass === true) {
-            req.session.userID = row[0].id;
-            return res.redirect('/home');
+            req.session.userID = row[0].ID;
+            return res.redirect('/dashboard');
+            
         }
 
         res.render('login', {
-            error: 'Invalid Password.'
+            error: '- Invalid email address/password combination.'
         });
     }
     catch (e) {

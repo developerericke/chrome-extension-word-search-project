@@ -1,0 +1,9 @@
+#popup-wrap{
+    position: relative;
+    width:200px;
+    height: 200px;
+}
+h2{
+    padding:50px;
+    color:red;
+}

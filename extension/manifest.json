@@ -1,0 +1,35 @@
+
+{
+
+    "manifest_version": 3,
+    "name":"Word Search",
+    "version":"1.0.0",
+
+    "action": {
+        "default_icon": {              
+          "16": "images/logo_32.png",   
+          "24": "images/logo_32.png",   
+          "32": "images/logo_32.png"    
+        },
+        "default_title": "Save word search",  
+        "default_popup": "/htmls/index.html"  
+      },
+
+
+    "author":"Joe doe",
+    "description":"A word search game",
+
+    "scripts":{
+        "main":"scripts/main.js"
+    },
+    "styles":{
+        "main":"scripts/main.css"
+    },
+    "files":[
+        "htmls/index.html",
+        "scripts/main.js",
+        "styles/main.css"
+    ],
+    "icon":"images/logo_32.png"
+
+}

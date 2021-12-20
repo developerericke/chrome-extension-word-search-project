@@ -20,12 +20,13 @@ const ifNotLoggedin = (req, res, next) => {
 
 const ifLoggedin = (req, res, next) => {
   if (req.session.userID) {
-    return res.redirect("/home");
+    
+    return res.redirect("/dashboard");
   }
   next();
 };
 
-router.get("/home", ifNotLoggedin, homePage);
+router.get("/dashboard", ifNotLoggedin, homePage);
 
 router.get("/login", ifLoggedin, loginPage);
 

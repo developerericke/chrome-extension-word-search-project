@@ -1,35 +1,60 @@
 <%- include('header',{
     title:'Signup'
 }); -%>
+<div class="border border-2 rounded-3" id="authenticate">
+    <div id="signup">
+        <div class="bg-info text-center" style="font-size: x-large;">Signup</div>
+        <form action="/signup" method="post">
 
-<div id="signup">
-    <div class="bg-info text-center" style="font-size: x-large;">Signup</div>
-    <form action="" method="POST">
-        <div class="form-group">
-            <label for="user_name">Name</label>
-        <input type="text" class="input" name="_name" id="user_name" placeholder="Enter your name">
-        </div>
-        <div class="form-group mt-3">
-            <label for="user_email">Email</label>
-        <input type="email" class="input" name="_email" id="user_email" placeholder="Enter your email">
-        </div>
-        <div class="form-group mt-3">
-            <label for="user_pass">Password</label>
-        <input type="password" class="input" name="_password" id="user_pass" placeholder="Enter new password">
-        </div>
-        <div class="form-group mt-3">
-            <label for="user_pass">Confirm Password</label>
-            <input type="password" class="input" name="_confirm_password" id="user_confirm_pass" placeholder="Confirm password">
+            <!-- output errors here -->
+            <!-- hapa iko correct ? Naona nime confuse na how its done in django,maybe -->
+           <!-- ebu try ku proceed, I watch,haukuw umesaves -->
            
-        </div>
-         <% if(typeof msg != 'undefined'){ %>
-        <div class="success-msg"><%= msg %></div><% }
-        if(typeof error !== 'undefined'){ %>
-        <div class="err-msg"><%= error %></div><% } %>
-        <input type="submit" value="Sign Up">
-        <div class="link"><a href="./login">Login</a></div>
-    </form>
+            <div class="form-state">
+             <% if (typeof error !== 'undefined'){ %>
+
+                <div class="alert alert-danger">
+                    <div style="text-decoration: underline;">Please fix the following errors : </div><br>
+                    <%- error %>
+                </div>
+
+             <% } %>
+
+             <% if (typeof message !== 'undefined'){ %>
+
+                <div class="alert alert-success">
+                   Registration successful. Please check your email to activate your account.
+                </div>
+
+             <% } %>
+            </div>
+
+            
+            <div class="form-group mt-2">
+                <label for="register_bame"  class="text-muted ">Full Name</label>
+                <input type="text" class="form-control" id="register_name" name="_name" placeholder="Full Name">
+            </div>
+            <div class="form-group mt-2">
+                <label for="register_username"  class="text-muted ">Email</label>
+                <input type="email" class="form-control" id="register_username" name="_email" placeholder="Email">
+            </div>
+
+            <div class="form-group mt-3">
+                <label for="register_password" class="text-muted">Password</label>
+                <input type="password" class="form-control" id="register_password" name="_password" placeholder="Password">
+            </div>
+
+            <div class="form-group mt-3">
+                <label for="r_confirm_password" class="text-muted">Confirm Password</label>
+                <input type="password" class="form-control" id="r_confirm_password" name="_confirm_password" placeholder="Confirm Password">
+            </div>
+
+            <button type="submit" class="btn mt-3 btn-primary">Signup</button>
+
+        </form>
+
     </div>
+    
 </div>
 
 <%- include('footer'); -%>

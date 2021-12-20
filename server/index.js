@@ -1,3 +1,4 @@
+require('dotenv').config();
 const cookieParser = require('cookie-parser');
 const express = require('express');
 const session = require('express-session');
@@ -16,11 +17,11 @@ app.use(express.urlencoded({ extended: false }));
 
 var sessionStore = new MySQLStore(
     {
-        host: process.env.DATABASE_HOST,
+        host: process.env.DB_HOST,
         port: 3306,
-        user: process.env.DATABASE_USER,
-        password: process.env.DATABASE_PASS,
-        database: process.env.DATABASE_DB
+        user: process.env.DB_USER,
+        password: process.env.DB_PASS,
+        database:process.env.DB_NAME
     }
 );
 app.use(session({
@@ -46,5 +47,5 @@ app.use((err, req, res, next) => {
     return res.send('Internal Server Error');
 });
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 8000;
 app.listen(port, ()=>console.log(`Server starting at port ${port}`));
