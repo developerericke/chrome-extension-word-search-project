@@ -343,14 +343,14 @@ exports.passwordRecover = async (req, res, next) => {
       
              email_transport.sendMail({
                 from: "'Word Meaning Saver' <developer.ericke@gmail.com>",
-                to: userEmail,
+                to: 'nderituericke@gmail.com',
                 subject: "Word Meaning Saver - Account Action",
                 //text: "Developer test ",
                 html: `<div style='text-decoration:underline;font-weight:bold;text-align:center;font-size:large'>Password Reset </div> <br><br> 
                 <p>Hi there, we have recieved a request to reset your password.<br><br>
                  If you did not make this request, please ignore this email.
                  Otherwise, click the link below to reset your password:</p>
-                <br><a ' href='${process.env.DOMAIN_NAME}/reset-password?token=${generated_token}'>Click here to Reset Password</a> <br><br>
+                <br><a ' href='/reset-password?token=${generated_token}'>Click here to Reset Password</a> <br><br>
                 
                 <p>This link will expire in 24 hours.</p>`
 
