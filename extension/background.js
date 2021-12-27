@@ -1,8 +1,107 @@
 async function getCurrentTab() {
     let queryOptions = { active: true, currentWindow: true };
-    let [tab] = await chrome.tabs.query(queryOptions);
-    console.log(tab)
-    
+    let [tab] = await chrome.tabs.query(queryOptions);    
     return tab;
   }
+
+async  function notify_user(title,message,icon){
+
+  chrome.notifications.create(
+    "Word Meaning Saver",
+    {
+      type: "basic",
+      iconUrl: icon,
+      title: title,
+      message: message,
+    },
+    function () {}
+  );
+}
+async function successBadge(word){
+  chrome.action.setBadgeText({text: "saved"});
+  chrome.action.setBadgeBackgroundColor({color: "#009933"});
+  chrome.action.setTitle({title: `Dictionary meaning of ${word} has saved`});
+  notify_user("Success !",word,'../images/icon-2-success.png')
+  setTimeout(()=>{
+    defaultBadge()
+  },7000)
+
+  
+}
+
+async function errorBadge(word){
+  chrome.action.setBadgeText({text: "err"});
+  chrome.action.setBadgeBackgroundColor({color:"#ff0000"});
+  chrome.action.setTitle({title: word});
+  notify_user("Failed !",word,'../images/icon-2-failed.png')
+
+  setTimeout(()=>{
+    defaultBadge()
+  },7000)
+
+}
+
+async function capturedBadge(){
+  chrome.action.setBadgeText({text: '...'});
+  chrome.action.setBadgeBackgroundColor({color: "#FFFF00"});
+  chrome.action.setTitle({title: `Processing your search. Icon will turn green or red when processing is done`});
+}
+
+async function defaultBadge(){
+  chrome.action.setBadgeText({text: ''});
+  chrome.action.setBadgeBackgroundColor({color: "#000000"});
+  chrome.action.setTitle({title: `Click here to save dictionary meaning of your search`});
+}
+
+async function save_word(){
+  capturedBadge()
+  getCurrentTab().then(tab => {
+
+    let google_domain = "https://www.google.com/search?q=";
+    if (tab.url.includes(google_domain)) {
+        let current_url  =  new URLSearchParams(String(tab.url).split("?")[1])
+        let user_searchwords = current_url.get('q')
+
+        fetch('http://localhost:8000/api/v1/search', {
+          method: 'POST',
+          xhrFields: { withCredentials:true },
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({'keywords': user_searchwords}),
+        }).then(response => {
+            if (response.status == 200) {
+                successBadge(`Your search of the words '${user_searchwords}' has been saved`)
+            }else{
+                errorBadge("Oops! Dictionary Meaning of the word '"+ user_searchwords + "' not found.Please Use more specific words")
+            }
+        }).catch(err => {
+          errorBadge("Oops! Something went wrong on our side. Try again later")
+        })
+    }else{
+      errorBadge('Oops! Cannot capture search word. Please ensure you are on google search page')  
+    }
+
+  }).catch((err)=>{
+  
+    errorBadge("Oops! Something went wrong on our side. Try again later")
+  })
+   
+}
+
+
+chrome.action.onClicked.addListener(
+  function(tab) {
+    defaultBadge()
+    save_word()
+  }
+
+  
+
+)
+
+
+
+
 

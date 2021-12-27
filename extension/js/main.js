@@ -1,32 +1,34 @@
-// alert('Word succesfully saved');
-// alert('Sign in to check your saved words');
-    
-    document.querySelector("#my-button").addEventListener("click", function() {
-        getCurrentTab().then(tab => {
-            let google_domain = "https://www.google.com/search?q=";
 
-            if (tab.url.includes(google_domain)) {
-              
+   
+function userState(){
+    $('#save-state').addClass('d-none').html('')
+    defaultBadge()
+    $.ajax({
+        url: "http://localhost:8000/api/v1/user/state",
+        method: "GET",
+        xhrFields: { withCredentials: true },
+        success: function(data) {
+            //show loged in section
+         
+            $('#guest').addClass('d-none');
+            $('#authenticated').removeClass('d-none');
+            $('#user_name').html(data.user)
 
-            let current_url  =  new URLSearchParams(String(tab.url).split("?")[1])
-            let user_searchwords = current_url.get('q')
+            // $('#logout_link').click(()=>{
+            //     $('#authenticated').addClass('d-none'); 
+            //     $('#guest').removeClass('d-none');
+            //    $.get('http://localhost:8000/api/v1/logout')
+            // })
+            
+        },
+        error: function(data) {
+            //show loged out section
+            $('#authenticated').addClass('d-none');
+            $('#guest').removeClass('d-none');
+        }
 
-            alert(user_searchwords)
-            $.post("http://localhost:8000/api/v1/search",`keywords=${user_searchwords}`,(res)=>{
-                console.log(res)
-            }).catch((e=>{
-                console.log(e)
-            }))
-             
-            }else{
-                alert("This is not a google page");
-            }
-                 
-
-
-
-
-        })
-       
     })
+}
+
+userState()
 

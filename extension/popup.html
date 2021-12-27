@@ -3,26 +3,69 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Word Meaning Saver</title>
     <link rel="stylesheet" href="styles/main.css">       
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
 
 </head>
-<body>
+<body class="border border-1">
+
+
     <div id="popup-wrap">
-        <div class="head"> 
-           <img src="images/256_logo.png" alt="img" class="rounded">
-           <h2>Success</h2>
-        </div>
-       <div><button type="button" id="my-button" class="btn btn-primary">Sign In</button></div>
+        <header class="text-center border-bottom border-2">
+            <img  src="images/logo 150 x 80.png" style="width: fit-content;" alt="logo">
+            <div class="text-primary" style="font-size: 18px;font-weight: 400;" >Word Meanings Saver</div>
+            <p style="font-weight: 200;font-size: small;">A tool to help you save meanings of words that you search within google chrome</p>
+            
+        </header>   
+        
+
+        <section class="text-justify">
+           
+
+            <div class="m-1 text-center " id="save-state">
+              
+           </div>
+
+            <div id="guest" class="m-1 text-start mt-3 d-none ">
+                <div class="text-muted p-1 text-center" style="font-size:14px;text-decoration:underline;font-weight: bold;">Want to view saved meanings ?</div>
+
+                <button style="font-size: 11px;" class="btn-sm btn-primary mt-3 btn border border-1 ">
+                    <a href="http://localhost:8000/login" target="_blank" style="text-decoration: none;font-weight: bold;" class="text-light  ">Login or Signup</a>
+                </button>
+              
+            </div>
+            <div id="authenticated"  class="m-1 text-start d-none" >
+                <div class="ml-2" style="font-size:14px;font-weight: bold;">Welcome , <span  id="user_name"></span></div>
+
+                <div style="width: 100%;height: 1px;" class="border border-1 d-none"></div>
+                <ul style="list-style-type:disc;">
+                    <li>
+                        <a href="http://localhost:8000/dashboard" target="_blank" class="nav-link mt-3 ml-2 p-0  text-start" style="font-size: 12px;"> <i class="bi bi-person-circle"></i> Manage Account and Search Meanings</a>
+
+                    </li>
+                    <li>
+                        <a href="http://localhost:8000/logout" target="_blank" id="logout_link" class="nav-link mt-1 ml-2   p-0 text-start" style="font-size: 12px;"> <i class="bi bi-box-arrow-right"></i> Logout  </a>
+             
+                    </li>
+                </ul>
+              
+              
+
+            </div>
+
+        </section>
+
 
     </div>
 
 
 
      <script src="./js/jquery-3.6.0.min.js"></script> 
+  
      <script src="background.js"></script>
      <script src="./js/main.js"></script>
     

@@ -29,26 +29,33 @@ var sessionStore = new MySQLStore(
 );
 app.use(session({
     name: 'session',
-    secret: 'my_secret is mine and mine alone',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     store: sessionStore,
     saveUninitialized: false,
     cookie: {
-        maxAge: 3600 * 1000, // 1hr
+        maxAge: 3600 * 1000 * 24 * 30, // 30 days 
     }
 }));
 
-app.get('/',(req,res)=>{
-    res.send(`<div>Hello There</div>`);
-})
+
 //running static files 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(routes);
+app.use('*',(req,res,next)=>{
+     res.redirect('/login')  
+    
+    //return res.status(404).render('error', {error:" We can't find the Page you are looking for :(",error_details:`Please go back to safety by clicking  <a href="/">here</a>`});
+
+})
 
 app.use((err, req, res, next) => {
-    console.log(err);
-    return res.send('Internal Server Error');
+
+    
+       return res.status(500).render('error', {error:" Something went wrong :(",error_details:"Please try again later.Our engineers are working on it."});
+    
 });
+
 
 const port = process.env.PORT || 8000;
 app.listen(port, ()=>console.log(`Server starting at port ${port}`));

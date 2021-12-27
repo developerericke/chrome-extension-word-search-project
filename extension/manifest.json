@@ -2,26 +2,33 @@
 {
 
     "manifest_version": 3,
-    "name":"Word Search",
+    "name":"Word Meaning Saver",
     "version":"1.0.0",
-    "description": "Save word search",
+    "description": "A chrome extension tool to save meanings of words being searched in google chrome.Simply search a word on google i.e 'meaning of cup' and click on the extension tool. The tool will turn yellow to indicate processing, turn green to indicate success and red to indicate success. This tool will only work when words are searched within google search bar. You can also signup to  be able to view words and meanings that you have searched previously. ",
 
     "action": {
         "default_icon": {              
-          "16": "images/logo_32.png",   
-          "24": "images/logo_32.png",   
-          "32": "images/logo_32.png"    
+          "16": "images/logo 64X64-default.png",   
+          "24": "images/logo 64X64-default.png",   
+          "32": "images/logo 64X64-default.png"    
         },
-        "default_title": "Save word search",  
-        "default_popup": "popup.html"  
+        "default_title": "Word Meaning Saver" 
+      
     },
+    "options_ui": {
+        "page": "popup.html",
+        "open_in_tab": false
+      },
+      "icons": {
+        "16": "images/logo 64X64-default.png",
+        "24": "images/logo 64X64-default.png",
+        "32": "images/logo 64X64-default.png",
+        "48": "images/logo 64X64-default.png",
+        "64": "images/logo 64X64-default.png"
+      },
     
 
-    "icons":{ 
-            "16": "images/256_logo.png",
-            "48": "images/256_logo.png",
-            "128": "images/256_logo.png" 
-    },
+
 
     "background": {
         "service_worker": "background.js"
@@ -35,7 +42,7 @@
     
     ],
     "homepage_url": "http://localhost:8000",
-    "host_permissions": ["https://twitter.com/home","https://www.google.com/*"]
+    "host_permissions": ["https://www.google.com/*","http://localhost:8000/*"]
  
 
 }

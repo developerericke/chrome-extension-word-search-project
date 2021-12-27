@@ -8,8 +8,15 @@ const {
   registerPage,
   login,
   loginPage,
-  passwordResetLink,
-  search_api
+  passwordRecover,
+  search_api,
+  search_api_get,
+  recoverAccountPage,
+  resetForgotPassword,
+  updatePassword_from_reset,
+  updatePassword_from_dashboard,
+  activateAccount,
+  chrome_extension_user_state
 } = require("../controllers/userController");
 
 const ifNotLoggedin = (req, res, next) => {
@@ -30,6 +37,7 @@ const ifLoggedin = (req, res, next) => {
 router.get("/dashboard", ifNotLoggedin, homePage);
 
 router.get("/login", ifLoggedin, loginPage);
+router.get('/password/recover',recoverAccountPage)
 
 router.post(
   "/login",
@@ -79,8 +87,27 @@ router.get("/logout", (req, res, next) => {
   res.redirect("/login");
 });
 
-router.get("/recover/account", passwordResetLink);
+router.post("/recover", passwordRecover);
+router.get('/activate-account',activateAccount)
+
+router.post('/recover/update-password',updatePassword_from_reset)
+router.post('/dashboard/update-password',updatePassword_from_dashboard)
 
 router.post('/api/v1/search',search_api)
+
+router.get('/api/v1/user/state',chrome_extension_user_state)
+
+router.get('/api/v1/logout',(req,res,next)=>{
+  req.session.destroy((err) => {
+    next(err);
+  });
+  res.status(200).json({user:'Null'});
+})
+
+router.get('/words/view/:word',ifNotLoggedin,search_api_get)
+
+router.get('/reset-password',resetForgotPassword)
+
+
 
 module.exports = router;
