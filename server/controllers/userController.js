@@ -26,15 +26,18 @@ let email_transport = nodemailer.createTransport({
   });
 
 function email_sender_is_active(){
+    console.log("checking mail server")
 
     email_transport.verify(function (error, success) {
         if (error) {
+            console.log("errror in mail server")
 
           
 
 
           return false;
         } else {
+            console.log("success in mail server")
           return true;
         }
       });
@@ -314,6 +317,7 @@ exports.passwordRecover = async (req, res, next) => {
   try{    
     const { body } = req;
     const [row] = await db.execute("SELECT * FROM `T_Users` WHERE `User_email`=?",[ body.email ]);
+    console.log("found user")
    
  
     if (row.length !== 1) {
@@ -325,13 +329,16 @@ exports.passwordRecover = async (req, res, next) => {
          let userEmail = row[0].User_email;
          let date_requested = new Date().toLocaleTimeString();
          generated_token = url_token(userEmail+date_requested);
+         console.log("token generated")
          
          //try and send to email,if succeeds, add to database
+         console.log("checking if email is active")
          if (email_sender_is_active() == false){
-
+            console.log("email is inactive")
            
              res.render('forgot-password',{error:"Something isn't right with our servers. Please try again later."});
          }else{
+             console.log("email is active")
             
       
              email_transport.sendMail({
