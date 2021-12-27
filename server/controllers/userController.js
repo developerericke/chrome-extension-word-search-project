@@ -16,10 +16,9 @@ const moment = require('moment');
 
 
 let email_transport = nodemailer.createTransport({
-    service: 'SendGrid',
     host: process.env.EMAIL_HOST, 
     port: process.env.EMAIL_PORT, //587,25
-    secure: true, // upgrade later with STARTTLS
+    secure: false, // upgrade later with STARTTLS
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS
@@ -225,6 +224,8 @@ exports.register = async (req, res, next) => {
                             return res.render('register',{error:"Something isn't right with our servers. Please try again later."});
                         })  
 
+                 }else{
+                    return res.render('register',{error:"Something isn't right with our servers. Please try again later."});
                  }
            }).catch((err)=>{
               
@@ -371,6 +372,8 @@ exports.passwordRecover = async (req, res, next) => {
                                 res.render('forgot-password',{error:"Something isn't right with our servers. Please try again later."});
                             })  
 
+                     }else{
+                            res.render('forgot-password',{error:info});
                      }
                }).catch((err)=>{
                    console.log(err)
