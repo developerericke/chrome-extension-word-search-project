@@ -334,25 +334,26 @@ exports.passwordRecover = async (req, res, next) => {
          }else{
             
       
-            //  email_transport.sendMail({
-            //     from: "'Word Meaning Saver' <developer.ericke@gmail.com>",
-            //     to: "nderituericke@gmail.com",
-            //     subject: "Word Meaning Saver - Account Action",
-            //     //text: "Developer test ",
-            //     html: `<div style='text-decoration:underline;font-weight:bold;text-align:center;font-size:large'>Password Reset </div> <br><br> 
-            //     <p>Hi there, we have recieved a request to reset your password.<br><br>
-            //      If you did not make this request, please ignore this email.
-            //      Otherwise, click the link below to reset your password:</p>
-            //     <br><a ' href='${process.env.DOMAIN_NAME}/reset-password?token=${generated_token}'>Click here to Reset Password</a> <br><br>
+             email_transport.sendMail({
+                from: "'Word Meaning Saver' <developer.ericke@gmail.com>",
+                to: userEmail,
+                subject: "Word Meaning Saver - Account Action",
+                //text: "Developer test ",
+                html: `<div style='text-decoration:underline;font-weight:bold;text-align:center;font-size:large'>Password Reset </div> <br><br> 
+                <p>Hi there, we have recieved a request to reset your password.<br><br>
+                 If you did not make this request, please ignore this email.
+                 Otherwise, click the link below to reset your password:</p>
+                <br><a ' href='${process.env.DOMAIN_NAME}/reset-password?token=${generated_token}'>Click here to Reset Password</a> <br><br>
                 
-            //     <p>This link will expire in 24 hours.</p>`
+                <p>This link will expire in 24 hours.</p>`
 
-            //  }).then((info)=>{
-            //          if(info.accepted.length > 0){
-            //               //add token to database
+             }).then((info)=>{
+                 console.log(info)
+                     if(info.accepted.length > 0){
+                          //add token to database
                           
 
-                          const token_expiry = moment().add(1, 'days').format('YYYY-MM-DD HH:mm:ss')  
+                         const token_expiry = moment().add(1, 'days').format('YYYY-MM-DD HH:mm:ss')  
 
                      
                             
@@ -372,13 +373,13 @@ exports.passwordRecover = async (req, res, next) => {
                                 res.render('forgot-password',{error:"Something isn't right with our servers. Please try again later."});
                             })  
 
-            //          }else{
-            //                 res.render('forgot-password',{error:info});
-            //          }
-            //    }).catch((err)=>{
-            //        console.log(err)
-            //        res.render('forgot-password',{error:"Something isn't right with our servers. Please try again later."});
-            //    })
+                     }else{
+                            res.render('forgot-password',{error:info});
+                     }
+               }).catch((err)=>{
+                   console.log(err)
+                   res.render('forgot-password',{error:"Something isn't right with our servers. Please try again later."});
+               })
         
     
     }
