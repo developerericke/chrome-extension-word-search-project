@@ -140,7 +140,7 @@ exports.recoverAccountPage = (req, res, next) => {
 
 // User Registration
 exports.register = async (req, res, next) => {
- try{   
+ //try{   
     const errors = validationResult(req);
     const { body } = req;
    
@@ -182,7 +182,7 @@ exports.register = async (req, res, next) => {
         let date_requested = new Date().toLocaleTimeString();
         const generated_token = url_token(String(body._email)+date_requested);
         //send email to user
-        email_transport.sendMail({
+        await email_transport.sendMail({
             from: "'Word Meaning Saver' <developer.ericke@gmail.com>",
             to: body._email,
             subject: "Word Meaning Saver - Account Action",
@@ -196,6 +196,7 @@ exports.register = async (req, res, next) => {
             `
 
          }).then((info)=>{
+             console.log("preparing_tokens")
                  if(info.accepted.length > 0){
                       //add token to database
                       
@@ -224,8 +225,12 @@ exports.register = async (req, res, next) => {
                             return res.render('register',{error:"Something isn't right with our servers. Please try again later."});
                         })  
 
+                 }else{
+                     console.log(info)
+                    return res.render('register',{error:"Something isn't right with our servers. Please try again later."});
                  }
            }).catch((err)=>{
+                 console.log(err)
               
                return res.render('register',{error:"Something isn't right with our servers. Please try again later."});
            })
@@ -241,10 +246,10 @@ exports.register = async (req, res, next) => {
         next(e);
     }
 
- }catch(err){
-    return res.status(500).render('error', {error:" Something went wrong :(",error_details:"Please try again later.Our engineers are working on it."});
+ //}catch(err){
+    //return res.status(500).render('error', {error:" Something went wrong :(",error_details:"Please try again later.Our engineers are working on it."});
 
-  }    
+  //}    
 };
 
 // Login Page rendering  

@@ -41,8 +41,8 @@
      
     
     ],
-    "homepage_url": "http://localhost:8000",
-    "host_permissions": ["https://www.google.com/*","http://localhost:8000/*"]
+    "homepage_url": "https://eric-apps.space",
+    "host_permissions": ["https://www.google.com/*","https://eric-apps.space/*"]
  
 
 }
