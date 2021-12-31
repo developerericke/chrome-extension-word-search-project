@@ -52,6 +52,10 @@ app.use(routes);
 
 // })
 
+app.get('*',(req,res)=>{
+    res.redirect('/dashboard')
+})
+
 app.use((err, req, res, next) => {
 
     console.log(err)
