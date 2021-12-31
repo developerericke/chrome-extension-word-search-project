@@ -19,10 +19,21 @@ const {
   chrome_extension_user_state
 } = require("../controllers/userController");
 
+
+const loginRequired = (req,res,next) =>{
+  
+  if (!req.session.userID) {
+    return res.redirect("/login");
+  }
+  
+  next();
+}
+
 const ifNotLoggedin = (req, res, next) => {
   if (!req.session.userID) {
     return res.redirect("/login");
   }
+  
   next();
 };
 
@@ -34,14 +45,13 @@ const ifLoggedin = (req, res, next) => {
   next();
 };
 
-router.get("/dashboard", ifNotLoggedin, homePage);
+router.get("/dashboard", loginRequired, homePage);
 
-router.get("/login", ifLoggedin, loginPage);
+router.get("/login",  loginPage);
 router.get('/password/recover',recoverAccountPage)
 
 router.post(
   "/login",
-  ifLoggedin,
   [
     body("_email", "Invalid email address")
       .notEmpty()
@@ -57,11 +67,11 @@ router.post(
 );
 
 //getting the registration page
-router.get("/signup", ifLoggedin, registerPage);
+router.get("/signup",registerPage);
 
 router.post(
   "/signup",
-  ifLoggedin,
+ 
   [
     body("_name", "The name must be of minimum 3 characters length")
       .notEmpty()
@@ -104,7 +114,7 @@ router.get('/api/v1/logout',(req,res,next)=>{
   res.status(200).json({user:'Null'});
 })
 
-router.get('/words/view/:word',ifNotLoggedin,search_api_get)
+router.get('/words/view/:word',loginRequired,search_api_get)
 
 router.get('/reset-password',resetForgotPassword)
 

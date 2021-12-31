@@ -76,7 +76,7 @@ exports.homePage = async (req, res, next) => {
 
 
     if(logged_in_user == null){
-       res.redirect('/login')
+      return res.redirect('/login')
     }else{    
         const [searches] = await db.execute("SELECT * FROM `T_Searches` WHERE `search_user`=?", [req.session.userID]); 
 
@@ -114,12 +114,13 @@ exports.homePage = async (req, res, next) => {
         })
 
 
-        res.render('dashboard', {
+       return res.render('dashboard', {
             user:logged_in_user,
             searches: words_found
         });
     }
   }catch(err){
+      console.log(err)
     return res.status(500).render('error', {error:" Something went wrong :(",error_details:"Please try again later.Our engineers are working on it."});
 
   }  
@@ -128,9 +129,16 @@ exports.homePage = async (req, res, next) => {
 }
 
 // Register Page
-exports.registerPage = (req, res, next) => {
+exports.registerPage = async (req, res, next) => {
+   
 
- res.render('register')
+    let logged_in_user =await loggedUser(req)
+    if(logged_in_user == null){
+        res.render('register')
+    }else{   
+        res.redirect('/dashboard')
+    }
+
 };
 
 //recover-account
@@ -170,7 +178,7 @@ exports.register = async (req, res, next) => {
         const hashPass = await bcrypt.hash(body._password, 12);
 
         const [rows] = await db.execute(
-            "INSERT INTO `T_Users`(`User_name`,`User_email`,`User_password`) VALUES(?,?,?)",
+            "INSERT INTO `T_Users`(`User_name`,`User_email`,`User_password`,`Is_Active`) VALUES(?,?,?,1)",
             [body._name, body._email, hashPass]
         );
        
@@ -179,58 +187,61 @@ exports.register = async (req, res, next) => {
                 error: '<b>Failed</b> Your registration has failed.Please try again later'//,msg:false
             });
         }
-        let date_requested = new Date().toLocaleTimeString();
-        const generated_token = url_token(String(body._email)+date_requested);
-        //send email to user
-        email_transport.sendMail({
-            from: "'Word Meaning Saver' <developer.ericke@gmail.com>",
-            to: body._email,
-            subject: "Word Meaning Saver - Account Action",
-            //text: "Developer test ",
-            html: `<div style='text-decoration:underline;font-weight:bold;text-align:center;font-size:large'>Account Registration</div> <br><br> 
-            <p>Hi ${body._name},<br> 
-            Your account was registered succesfully.<br><br>
-             To complete the registration ,please the link below to activate your account:</p>
-            <br><a ' href='${process.env.DOMAIN_NAME}/activate-account?token=${generated_token}'>Click here to activate your account</a> <br><br>
+        res.render("register", {
+            message: 'You have successfully registered.'
+        });
+        // let date_requested = new Date().toLocaleTimeString();
+        // const generated_token = url_token(String(body._email)+date_requested);
+        // //send email to user
+        // email_transport.sendMail({
+        //     from: "'Word Meaning Saver' <developer.ericke@gmail.com>",
+        //     to: body._email,
+        //     subject: "Word Meaning Saver - Account Action",
+        //     //text: "Developer test ",
+        //     html: `<div style='text-decoration:underline;font-weight:bold;text-align:center;font-size:large'>Account Registration</div> <br><br> 
+        //     <p>Hi ${body._name},<br> 
+        //     Your account was registered succesfully.<br><br>
+        //      To complete the registration ,please the link below to activate your account:</p>
+        //     <br><a ' href='${process.env.DOMAIN_NAME}/activate-account?token=${generated_token}'>Click here to activate your account</a> <br><br>
             
-            `
+        //     `
 
-         }).then((info)=>{
-                 if(info.accepted.length > 0){
-                      //add token to database
+        //  }).then((info)=>{
+        //          if(info.accepted.length > 0){
+        //               //add token to database
                       
 
-                     const token_expiry = moment().add(1, 'days').format('YYYY-MM-DD HH:mm:ss')  
+        //              const token_expiry = moment().add(1, 'days').format('YYYY-MM-DD HH:mm:ss')  
 
                  
                         
-                        db.execute( "INSERT INTO `T_action_tokens` (`User_email`,`Token_type`,`Token`,`Token_expiry`) VALUES(?,?,?,?)",[body._email,"activate",generated_token,token_expiry])
-                       .then((dbresadd)=>{
+        //                 db.execute( "INSERT INTO `T_action_tokens` (`User_email`,`Token_type`,`Token`,`Token_expiry`) VALUES(?,?,?,?)",[body._email,"activate",generated_token,token_expiry])
+        //                .then((dbresadd)=>{
                          
        
-                           if (dbresadd[0].affectedRows !== 1) {
+        //                    if (dbresadd[0].affectedRows !== 1) {
     
-                             return res.render('register',{error:"Something isn't right with our servers. Please try again later."});
-                           }else{ 
-                                res.render("register", {
-                                    message: 'You have successfully registered.'
-                                });
+        //                      return res.render('register',{error:"Something isn't right with our servers. Please try again later."});
+        //                    }else{ 
+        //                         res.render("register", {
+        //                             message: 'You have successfully registered.'
+        //                         });
                           
 
-                           }
-                        }).catch((err)=>{
+        //                    }
+        //                 }).catch((err)=>{
                           
                      
-                            return res.render('register',{error:"Something isn't right with our servers. Please try again later."});
-                        })  
+        //                     return res.render('register',{error:"Something isn't right with our servers. Please try again later."});
+        //                 })  
 
-                 }else{
-                    return res.render('register',{error:"Something isn't right with our servers. Please try again later."});
-                 }
-           }).catch((err)=>{
+        //          }else{
+        //             return res.render('register',{error:"Something isn't right with our servers. Please try again later."});
+        //          }
+        //    }).catch((err)=>{
               
-               return res.render('register',{error:"Something isn't right with our servers. Please try again later."});
-           })
+        //        return res.render('register',{error:"Something isn't right with our servers. Please try again later."});
+        //    })
          
     }else{
         
@@ -250,8 +261,16 @@ exports.register = async (req, res, next) => {
 };
 
 // Login Page rendering  
-exports.loginPage = (req, res, next) => {
-    res.render("login");
+exports.loginPage = async (req, res, next) => {
+    let logged_in_user =await loggedUser(req)
+
+  
+    if(logged_in_user == null){
+        res.render('login')
+    }else{   
+        res.redirect('/dashboard')
+    }
+    
 };
 
 
@@ -271,7 +290,7 @@ exports.login = async (req, res, next) => {
             error: validation_errors
         });
     }
-    try {
+
         const [row] = await db.execute('SELECT * FROM `T_Users` WHERE `User_email`=?', [body._email]);
 
         if (row.length != 1) {
@@ -291,15 +310,15 @@ exports.login = async (req, res, next) => {
             req.session.userID = row[0].ID;
             return res.redirect('/dashboard');
             
+        }else{
+           return res.render('login', {
+                error: '- Invalid email address/password combination.'
+            });
         }
 
-        res.render('login', {
-            error: '- Invalid email address/password combination.'
-        });
-    }
-    catch (e) {
-        next(e);
-    }
+      
+    
+ 
 
 }catch(err){
     return res.status(500).render('error', {error:" Something went wrong :(",error_details:"Please try again later.Our engineers are working on it."});
@@ -682,6 +701,8 @@ exports.search_api_get = async (req, res, next) => {
 }
 
 exports.chrome_extension_user_state = async function(req,res,next){
+
+ 
   try{  
     logged_in_user = await loggedUser(req)
     if(logged_in_user != null){
@@ -689,9 +710,9 @@ exports.chrome_extension_user_state = async function(req,res,next){
     }else{
         return res.status(401).json({"message":"You are not logged in"})
     }
-}catch(err){
+ }catch(err){
     return res.status(500).json({user:null})
-}
+ }
 
 }
 

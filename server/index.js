@@ -13,7 +13,10 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 
-app.use(cors())
+app.use(cors({
+    credentials: true,
+    origin: '*' //process.env.cors_origin
+}))
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
@@ -42,20 +45,22 @@ app.use(session({
 //running static files 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(routes);
-app.use('*',(req,res,next)=>{
-     res.redirect('/login')  
+// app.use('*',(req,res,next)=>{
+//      res.redirect('/login')  
     
-    //return res.status(404).render('error', {error:" We can't find the Page you are looking for :(",error_details:`Please go back to safety by clicking  <a href="/">here</a>`});
+//     //return res.status(404).render('error', {error:" We can't find the Page you are looking for :(",error_details:`Please go back to safety by clicking  <a href="/">here</a>`});
 
-})
+// })
 
-// app.use((err, req, res, next) => {
+app.use((err, req, res, next) => {
+
+    console.log(err)
 
     
-//        return res.status(500).render('error', {error:" Something went wrong :(",error_details:"Please try again later.Our engineers are working on it."});
+       return res.status(500).render('error', {error:" Something went wrong :(",error_details:"Please try again later.Our engineers are working on it."});
     
-// });
+});
 
 
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 8080;
 app.listen(port, ()=>console.log(`Server starting at port ${port}`));

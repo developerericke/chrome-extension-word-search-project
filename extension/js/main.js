@@ -4,9 +4,10 @@ function userState(){
     $('#save-state').addClass('d-none').html('')
     defaultBadge()
     $.ajax({
-        url: "http://localhost:8000/api/v1/user/state",
+        url: "http://localhost:8080/api/v1/user/state",
         method: "GET",
         xhrFields: { withCredentials: true },
+        crossDomain: true,
         success: function(data) {
             //show loged in section
          
