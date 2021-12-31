@@ -41,8 +41,8 @@
      
     
     ],
-    "homepage_url": "https://eric-apps.space",
-    "host_permissions": ["https://www.google.com/*","https://eric-apps.space/*"]
+    "homepage_url": "https://dictionary-save.eric-apps.space",
+    "host_permissions": ["https://www.google.com/*","https://dictionary-save.eric-apps.space/*"]
  
 
 }

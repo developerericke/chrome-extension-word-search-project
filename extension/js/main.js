@@ -4,7 +4,7 @@ function userState(){
     $('#save-state').addClass('d-none').html('')
     defaultBadge()
     $.ajax({
-        url: "http://localhost:8080/api/v1/user/state",
+        url: "https://dictionary-save.eric-apps.space/api/v1/user/state",
         method: "GET",
         xhrFields: { withCredentials: true },
         crossDomain: true,

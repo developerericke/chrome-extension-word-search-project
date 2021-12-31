@@ -62,7 +62,7 @@ async function save_word(){
         let current_url  =  new URLSearchParams(String(tab.url).split("?")[1])
         let user_searchwords = current_url.get('q')
 
-        fetch('http://localhost:8080/api/v1/search', {
+        fetch('https://dictionary-save.eric-apps.space/api/v1/search', {
           method: 'POST',
           xhrFields: { withCredentials:true },
           headers: {

@@ -9,6 +9,7 @@
     margin-bottom: 150px;
     border: 1px solid white;
     border-radius:20px 20px 0 0;
+    min-height:80vh;
 }
 
 #dashboard table{
