@@ -58,10 +58,8 @@ app.get('*',(req,res)=>{
 
 app.use((err, req, res, next) => {
 
-    console.log(err)
-
     
-       return res.status(500).render('error', {error:" Something went wrong :(",error_details:"Please try again later.Our engineers are working on it."});
+       return res.status(500).render('error', {error:" Something went wrong :(",error_details:"Please try again later.Our engineers are working on it. <br>"+ err});
     
 });
 

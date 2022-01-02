@@ -18,7 +18,7 @@ const moment = require('moment');
 let email_transport = nodemailer.createTransport({
     host: process.env.EMAIL_HOST, 
     port: process.env.EMAIL_PORT, //587,25
-   // secure: true, // upgrade later with STARTTLS
+    //secure: true, // upgrade later with STARTTLS
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS
@@ -187,61 +187,62 @@ exports.register = async (req, res, next) => {
                 error: '<b>Failed</b> Your registration has failed.Please try again later'//,msg:false
             });
         }
-        res.render("register", {
-            message: 'You have successfully registered.'
-        });
-        // let date_requested = new Date().toLocaleTimeString();
-        // const generated_token = url_token(String(body._email)+date_requested);
-        // //send email to user
-        // email_transport.sendMail({
-        //     from: "'Word Meaning Saver' <developer.ericke@gmail.com>",
-        //     to: body._email,
-        //     subject: "Word Meaning Saver - Account Action",
-        //     //text: "Developer test ",
-        //     html: `<div style='text-decoration:underline;font-weight:bold;text-align:center;font-size:large'>Account Registration</div> <br><br> 
-        //     <p>Hi ${body._name},<br> 
-        //     Your account was registered succesfully.<br><br>
-        //      To complete the registration ,please the link below to activate your account:</p>
-        //     <br><a ' href='${process.env.DOMAIN_NAME}/activate-account?token=${generated_token}'>Click here to activate your account</a> <br><br>
+        // res.render("register", {
+        //     message: 'You have successfully registered.'
+        // });
+        let date_requested = new Date().toLocaleTimeString();
+        const generated_token = url_token(String(body._email)+date_requested);
+        //send email to user
+        email_transport.sendMail({
+            from: "'Word Meaning Saver' <developer.ericke@gmail.com>",
+            to: body._email,
+            subject: "Word Meaning Saver - Account Action",
+            //text: "Developer test ",
+            html: `<div style='text-decoration:underline;font-weight:bold;text-align:center;font-size:large'>Account Registration</div> <br><br> 
+            <p>Hi ${body._name},<br> 
+            Your account was registered succesfully.<br><br>
+             To complete the registration ,please the link below to activate your account:</p>
+            <br><a ' href='${process.env.DOMAIN_NAME}/activate-account?token=${generated_token}'>Click here to activate your account</a> <br><br>
             
-        //     `
+            `
 
-        //  }).then((info)=>{
-        //          if(info.accepted.length > 0){
-        //               //add token to database
+         }).then((info)=>{
+                
+                 if(info.accepted.length > 0){
+                      //add token to database
                       
 
-        //              const token_expiry = moment().add(1, 'days').format('YYYY-MM-DD HH:mm:ss')  
+                     const token_expiry = moment().add(1, 'days').format('YYYY-MM-DD HH:mm:ss')  
 
                  
                         
-        //                 db.execute( "INSERT INTO `T_action_tokens` (`User_email`,`Token_type`,`Token`,`Token_expiry`) VALUES(?,?,?,?)",[body._email,"activate",generated_token,token_expiry])
-        //                .then((dbresadd)=>{
+                        db.execute( "INSERT INTO `T_action_tokens` (`User_email`,`Token_type`,`Token`,`Token_expiry`) VALUES(?,?,?,?)",[body._email,"activate",generated_token,token_expiry])
+                       .then((dbresadd)=>{
                          
        
-        //                    if (dbresadd[0].affectedRows !== 1) {
+                           if (dbresadd[0].affectedRows !== 1) {
     
-        //                      return res.render('register',{error:"Something isn't right with our servers. Please try again later."});
-        //                    }else{ 
-        //                         res.render("register", {
-        //                             message: 'You have successfully registered.'
-        //                         });
+                             return res.render('register',{error:"Something isn't right with our servers. Please try again later."});
+                           }else{ 
+                                res.render("register", {
+                                    message: 'You have successfully registered.'
+                                });
                           
 
-        //                    }
-        //                 }).catch((err)=>{
+                           }
+                        }).catch((err)=>{
                           
                      
-        //                     return res.render('register',{error:"Something isn't right with our servers. Please try again later."});
-        //                 })  
+                            return res.render('register',{error:"Something isn't right with our servers. Please try again later."});
+                        })  
 
-        //          }else{
-        //             return res.render('register',{error:"Something isn't right with our servers. Please try again later."});
-        //          }
-        //    }).catch((err)=>{
+                 }else{
+                    return res.render('register',{error:"Something isn't right with our servers. Please try again later."});
+                 }
+           }).catch((err)=>{
               
-        //        return res.render('register',{error:"Something isn't right with our servers. Please try again later."});
-        //    })
+               return res.render('register',{error:"Something isn't right with our servers. Please try again later."});
+           })
          
     }else{
         
@@ -255,6 +256,7 @@ exports.register = async (req, res, next) => {
     }
 
  }catch(err){
+     console.log(err)
     return res.status(500).render('error', {error:" Something went wrong :(",error_details:"Please try again later.Our engineers are working on it."});
 
   }    
