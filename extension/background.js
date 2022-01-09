@@ -92,7 +92,7 @@ async function save_word(){
 
 async function save_conext_word(word){
   capturedBadge()
-  fetch('https://dictionary-save.eric-apps.space/api/v1/search', {
+  fetch('http://127.0.0.1:8080/api/v1/search', {
     method: 'POST',
     xhrFields: { withCredentials:true },
     headers: {
@@ -102,11 +102,12 @@ async function save_conext_word(word){
     body: JSON.stringify({'keywords':word}),
   }).then(response => {
       if (response.status == 200) {
-          successBadge(`Your search of the words '${user_searchwords}' has been saved`)
+          successBadge(`Your search of the words '${word}' has been saved`)
       }else{
-          errorBadge("Oops! Dictionary Meaning of the word '"+ user_searchwords + "' not found.Please Use more specific words")
+          errorBadge("Oops! Dictionary Meaning of the word '"+ word + "' not found.Please Use more specific words")
       }
   }).catch(err => {
+    console.log(err)
     errorBadge("Oops! Something went wrong on our side. Try again later")
   })
 
@@ -122,6 +123,18 @@ chrome.action.onClicked.addListener(
   
 
 )
+
+function makeid(length) {
+  var result           = '';
+  var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  var charactersLength = characters.length;
+  for ( var i = 0; i < length; i++ ) {
+    result += characters.charAt(Math.floor(Math.random() * 
+charactersLength));
+ }
+ return result;
+}
+
 chrome.contextMenus.create(
     {
       title:"Save word Meaning",

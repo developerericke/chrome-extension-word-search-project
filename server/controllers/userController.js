@@ -642,19 +642,22 @@ exports.search_api = async (req, res, next) => {
                
                     db.execute(`insert into T_Searches (word,meaning,search_user) values (?,${JSON.stringify(body)},?)`,[`${user_actual_keyword}`,user_id])
                     .then((dbres)=>{
-                        if (dbres.affectedRows !== 1) {
+                     
+                        if (dbres[0].affectedRows == 1) {
                             return res.status(200).json({"message": "Search API","keywords":user_keyword}); 
                         }else{
-                            return res.status(400).json({"message": "Search API","keywords":user_keyword});  
+                            
+                            return res.status(500).json({"message": "Search API","keywords":user_keyword});  
                         }
 
                     }).catch((err)=>{
-                        console.log(err)
-                        return res.status(400).json({"message": "Search API","keywords":user_keyword});  
+                  
+                        return res.status(500).json({"message": "Search API","keywords":user_keyword});  
                     })
                    
                     
                  }else{
+      
                     return res.status(400).json({"message": "Search API","keywords":user_keyword});  
                  }
                
