@@ -4,7 +4,7 @@
     "manifest_version": 3,
     "name":"Word Meaning Saver",
     "version":"1.0.0",
-    "description": "A chrome extension tool to save meanings of words being searched in google chrome.Simply search a word on google i.e 'meaning of cup' and click on the extension tool. The tool will turn yellow to indicate processing, turn green to indicate success and red to indicate success. This tool will only work when words are searched within google search bar. You can also signup to  be able to view words and meanings that you have searched previously. ",
+    "description": "A chrome extension tool to save meanings of words being searched in google chrome. ",
 
     "action": {
         "default_icon": {              
@@ -37,7 +37,8 @@
         
         "activeTab",
         "tabs",
-        "notifications"
+        "notifications",
+        "contextMenus"
      
     
     ],

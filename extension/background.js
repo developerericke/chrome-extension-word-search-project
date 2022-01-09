@@ -90,6 +90,28 @@ async function save_word(){
    
 }
 
+async function save_conext_word(word){
+  capturedBadge()
+  fetch('https://dictionary-save.eric-apps.space/api/v1/search', {
+    method: 'POST',
+    xhrFields: { withCredentials:true },
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({'keywords':word}),
+  }).then(response => {
+      if (response.status == 200) {
+          successBadge(`Your search of the words '${user_searchwords}' has been saved`)
+      }else{
+          errorBadge("Oops! Dictionary Meaning of the word '"+ user_searchwords + "' not found.Please Use more specific words")
+      }
+  }).catch(err => {
+    errorBadge("Oops! Something went wrong on our side. Try again later")
+  })
+
+}
+
 
 chrome.action.onClicked.addListener(
   function(tab) {
@@ -100,8 +122,28 @@ chrome.action.onClicked.addListener(
   
 
 )
+chrome.contextMenus.create(
+    {
+      title:"Save word Meaning",
+      id:"Word_saver_context_menu",
+      contexts:["selection"]
 
 
+  },
+ 
+)
+
+chrome.contextMenus.onClicked.addListener(
+  function(info,tab){
+    if (info.menuItemId == "Word_saver_context_menu") {
+      if (info.selectionText) {
+        save_conext_word(info.selectionText)
+      }
+ 
+    }
+  
+  }
+)
 
 
 
