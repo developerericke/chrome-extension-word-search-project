@@ -159,4 +159,17 @@ chrome.contextMenus.onClicked.addListener(
 )
 
 
+chrome.runtime.onInstalled.addListener(function() {
+  
+
+  chrome.tabs.create({
+    url: 'https://dictionary-save.eric-apps.space/',
+    active: true
+  });
+
+  return false;
+});
+
+
+
 

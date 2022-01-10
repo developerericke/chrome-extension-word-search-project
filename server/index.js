@@ -53,7 +53,7 @@ app.use(routes);
 // })
 
 app.get('*',(req,res)=>{
-    res.redirect('/dashboard')
+    res.render('index')
 })
 
 app.use((err, req, res, next) => {

@@ -16,7 +16,10 @@ const {
   updatePassword_from_reset,
   updatePassword_from_dashboard,
   activateAccount,
-  chrome_extension_user_state
+  chrome_extension_user_state,
+  landingPage,
+  privacyPage,
+  termsPage
 } = require("../controllers/userController");
 
 
@@ -116,6 +119,9 @@ router.get('/words/view/:word',loginRequired,search_api_get)
 
 router.get('/reset-password',resetForgotPassword)
 
+router.get('/',landingPage)
+router.get('/privacy',privacyPage)
+router.get('/terms',termsPage)
 
 
 module.exports = router;

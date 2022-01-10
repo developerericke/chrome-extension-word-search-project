@@ -38,8 +38,8 @@
         "activeTab",
         "tabs",
         "notifications",
-        "contextMenus"
-     
+        "contextMenus",
+        "management"
     
     ],
     "homepage_url": "https://dictionary-save.eric-apps.space",

@@ -68,6 +68,24 @@ async function loggedUser(req){
    
 }
 
+
+
+exports.landingPage = async (req, res, next) => {
+
+        res.render('index')
+    
+};
+exports.privacyPage = async (req, res, next) => {
+
+    res.render('privacy')
+
+};
+
+exports.termsPage = async (req, res, next) => {
+
+    res.render('terms')
+
+};
 //dashboard
 exports.homePage = async (req, res, next) => {
      
