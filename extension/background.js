@@ -92,7 +92,7 @@ async function save_word(){
 
 async function save_conext_word(word){
   capturedBadge()
-  fetch('http://127.0.0.1:8080/api/v1/search', {
+  fetch('https://dictionary-save.eric-apps.space/api/v1/search', {
     method: 'POST',
     xhrFields: { withCredentials:true },
     headers: {
@@ -124,16 +124,6 @@ chrome.action.onClicked.addListener(
 
 )
 
-function makeid(length) {
-  var result           = '';
-  var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-  var charactersLength = characters.length;
-  for ( var i = 0; i < length; i++ ) {
-    result += characters.charAt(Math.floor(Math.random() * 
-charactersLength));
- }
- return result;
-}
 
 chrome.contextMenus.create(
     {
