@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="static/images/logo_32.png" type="image/x-icon">
     <title>
-        Dashboard
+        Word Meaning Saver 
     </title>
     <!-- CSS only -->
  
@@ -15,6 +15,10 @@
 <link rel="stylesheet" href="static/css/skeleton.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="static/css/dashboard.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Moon+Dance&display=swap" rel="stylesheet">
  
     <style>
         #password-password{
@@ -210,6 +214,7 @@
 
          $.post('/dashboard/update-password',data,(res)=>{
             $('#form-errors').html('<b>Success</b> Your password has been updated successfully').removeClass('d-none alert-danger').addClass('alert-success')
+            $('form')[0].reset()
          }).catch((err)=>{
              let error = JSON.parse(err.responseText)
              $('#form-errors').html(error.error).removeClass('d-none alert-success').addClass('alert-danger')

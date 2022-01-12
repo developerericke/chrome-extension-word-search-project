@@ -29,10 +29,6 @@ function email_sender_is_active(){
 
     email_transport.verify(function (error, success) {
         if (error) {
-
-          
-
-
           return false;
         } else {
           return true;
@@ -40,12 +36,16 @@ function email_sender_is_active(){
       });
 }
 
+
+
+//get routes
+
 //get logged in user
 
 async function loggedUser(req){
     if(req.session.userID){
     try{
-        [rows,fields] = await db.execute("SELECT * FROM `T_Users` WHERE `ID`=?",[req.session.userID]);
+        [rows,fields] = await db.query("SELECT * FROM `T_Users` WHERE `ID`=?",[req.session.userID]);
         
         if (rows.length > 0) {
                 return rows[0];
@@ -68,24 +68,56 @@ async function loggedUser(req){
    
 }
 
-
-
 exports.landingPage = async (req, res, next) => {
 
         res.render('index')
-    
+
 };
 exports.privacyPage = async (req, res, next) => {
 
-    res.render('privacy')
+res.render('privacy')
 
 };
 
 exports.termsPage = async (req, res, next) => {
 
-    res.render('terms')
+res.render('terms')
 
 };
+
+// Register Page
+exports.registerPage = async (req, res, next) => {
+   
+
+    let logged_in_user =await loggedUser(req)
+    if(logged_in_user == null){
+        res.render('register')
+    }else{   
+        res.redirect('/dashboard')
+    }
+
+};
+
+//recover-account
+exports.recoverAccountPage = (req, res, next) => {
+    res.render("forgot-password");
+}
+
+// Login Page rendering  
+exports.loginPage = async (req, res, next) => {
+    let logged_in_user =await loggedUser(req)
+
+  
+    if(logged_in_user == null){
+        res.render('login')
+    }else{   
+        res.redirect('/dashboard')
+    }
+    
+};
+
+
+
 //dashboard
 exports.homePage = async (req, res, next) => {
      
@@ -96,7 +128,7 @@ exports.homePage = async (req, res, next) => {
     if(logged_in_user == null){
       return res.redirect('/login')
     }else{    
-        const [searches] = await db.execute("SELECT * FROM `T_Searches` WHERE `search_user`=?", [req.session.userID]); 
+        const [searches] = await db.query("SELECT * FROM `T_Searches` WHERE `search_user`=?", [req.session.userID]); 
 
         let words_found  = []
 
@@ -146,23 +178,11 @@ exports.homePage = async (req, res, next) => {
 
 }
 
-// Register Page
-exports.registerPage = async (req, res, next) => {
-   
 
-    let logged_in_user =await loggedUser(req)
-    if(logged_in_user == null){
-        res.render('register')
-    }else{   
-        res.redirect('/dashboard')
-    }
 
-};
 
-//recover-account
-exports.recoverAccountPage = (req, res, next) => {
-    res.render("forgot-password");
-}
+
+
 
 // User Registration
 exports.register = async (req, res, next) => {
@@ -181,7 +201,7 @@ exports.register = async (req, res, next) => {
         });
     }
     try {
-        const [row] = await db.execute(
+        const [row] = await db.query(
             "SELECT * FROM `T_Users` WHERE `User_email`=?",
             [body._email],
         );
@@ -212,7 +232,7 @@ exports.register = async (req, res, next) => {
         const generated_token = url_token(String(body._email)+date_requested);
         //send email to user
         email_transport.sendMail({
-            from: "'Word Meaning Saver' <developer.ericke@gmail.com>",
+            from: `'Word Meaning Saver' <${process.env.SENDER_EMAIL}>`,
             to: body._email,
             subject: "Word Meaning Saver - Account Action",
             //text: "Developer test ",
@@ -280,18 +300,41 @@ exports.register = async (req, res, next) => {
   }    
 };
 
-// Login Page rendering  
-exports.loginPage = async (req, res, next) => {
-    let logged_in_user =await loggedUser(req)
-
+exports.activateAccount = async (req, res, next) => {
+    try{  
+      //get token from url
+         const { query } = req;
   
-    if(logged_in_user == null){
-        res.render('login')
-    }else{   
-        res.redirect('/dashboard')
-    }
-    
-};
+         if([query.token] == undefined || [query.token] == null || [query.token] == ""){
+             return res.render('login',{error:"The token you provided is invalid .Please check your email for the activation link."});
+         }else{
+             //get token from database
+             const [row] = await db.query("SELECT * FROM `T_action_tokens` WHERE `Token`=?",[query.token]);
+             if (row.length !== 1) {
+                 return res.render('login',{error:"The token you provide is invalid . Please check your email for the activation link."});
+             }
+             //check if token is expired
+             let token_expiry = moment(row[0].Token_expiry).format('YYYY-MM-DD HH:mm:ss');
+             let now = moment().format('YYYY-MM-DD HH:mm:ss');
+             if (now > token_expiry){
+                 return res.render('login',{error:"The token you provide is invalid . Please check your email for the activation link."});
+             }
+  
+             //update user status to active
+              const [row2] = await db.execute("UPDATE `T_Users` SET `Is_Active`=? WHERE `User_email`=?",["1",row[0].User_email]);
+              if (row2.affectedRows !== 1) {
+                  return res.render('login',{error:"Something isn't right with our servers. Please try again later."});
+              }
+            
+             //token is valid, render reset password page
+             return res.render('login',{message:"Your account has been activated succesfully."});
+         }
+      }catch(err){
+          return res.status(500).render('error', {error:" Something went wrong :(",error_details:"Please try again later.Our engineers are working on it."});
+      
+        } 
+  
+  }
 
 
 
@@ -311,7 +354,7 @@ exports.login = async (req, res, next) => {
         });
     }
 
-        const [row] = await db.execute('SELECT * FROM `T_Users` WHERE `User_email`=?', [body._email]);
+        const [row] = await db.query('SELECT * FROM `T_Users` WHERE `User_email`=?', [body._email]);
 
         if (row.length != 1) {
             return res.render('login', {
@@ -348,11 +391,11 @@ exports.login = async (req, res, next) => {
 }
 
 
-//reset password
+//Send Password reset token
 exports.passwordRecover = async (req, res, next) => {
   try{    
     const { body } = req;
-    const [row] = await db.execute("SELECT * FROM `T_Users` WHERE `User_email`=?",[ body.email ]);
+    const [row] = await db.query("SELECT * FROM `T_Users` WHERE `User_email`=?",[ body.email ]);
    
  
     if (row.length !== 1) {
@@ -374,8 +417,8 @@ exports.passwordRecover = async (req, res, next) => {
             
       
              email_transport.sendMail({
-                from: "'Word Meaning Saver' <developer.ericke@gmail.com>",
-                to: "nderituericke@gmail.com",
+                from: `'Word Meaning Saver' <${process.env.SENDER_EMAIL}>`,
+                to: userEmail,
                 subject: "Word Meaning Saver - Account Action",
                 //text: "Developer test ",
                 html: `<div style='text-decoration:underline;font-weight:bold;text-align:center;font-size:large'>Password Reset </div> <br><br> 
@@ -429,7 +472,7 @@ exports.passwordRecover = async (req, res, next) => {
  
 }
 
-
+//validate passwrod reset
 exports.resetForgotPassword = async (req, res, next) => {
 
    try{ 
@@ -440,7 +483,7 @@ exports.resetForgotPassword = async (req, res, next) => {
             return res.render('forgot-password',{error:"The token you provide is invalid or has expired. Please use the form below to request a new token."});
         }else{
             //get token from database
-            const [row] = await db.execute("SELECT * FROM `T_action_tokens` WHERE `Token`=?",[query.token]);
+            const [row] = await db.query("SELECT * FROM `T_action_tokens` WHERE `Token`=?",[query.token]);
             if (row.length !== 1) {
                 return res.render('forgot-password',{error:"The token you provide is invalid or has expired. Please use the form below to request a new token."});
             }
@@ -460,43 +503,9 @@ exports.resetForgotPassword = async (req, res, next) => {
 
 }
 
-exports.activateAccount = async (req, res, next) => {
-  try{  
-    //get token from url
-       const { query } = req;
-
-       if([query.token] == undefined || [query.token] == null || [query.token] == ""){
-           return res.render('login',{error:"The token you provided is invalid .Please check your email for the activation link."});
-       }else{
-           //get token from database
-           const [row] = await db.execute("SELECT * FROM `T_action_tokens` WHERE `Token`=?",[query.token]);
-           if (row.length !== 1) {
-               return res.render('login',{error:"The token you provide is invalid . Please check your email for the activation link."});
-           }
-           //check if token is expired
-           let token_expiry = moment(row[0].Token_expiry).format('YYYY-MM-DD HH:mm:ss');
-           let now = moment().format('YYYY-MM-DD HH:mm:ss');
-           if (now > token_expiry){
-               return res.render('login',{error:"The token you provide is invalid . Please check your email for the activation link."});
-           }
-
-           //update user status to active
-            const [row2] = await db.execute("UPDATE `T_Users` SET `Is_Active`=? WHERE `User_email`=?",["1",row[0].User_email]);
-            if (row2.affectedRows !== 1) {
-                return res.render('login',{error:"Something isn't right with our servers. Please try again later."});
-            }
-          
-           //token is valid, render reset password page
-           return res.render('login',{message:"Your account has been activated succesfully."});
-       }
-    }catch(err){
-        return res.status(500).render('error', {error:" Something went wrong :(",error_details:"Please try again later.Our engineers are working on it."});
-    
-      } 
-
-}
 
 
+//password updade 
 exports.updatePassword_from_reset = async (req, res, next) => {
 
   try{  
@@ -540,11 +549,7 @@ exports.updatePassword_from_reset = async (req, res, next) => {
 
 }
 
-
-    
-   
-
-
+//password update
 exports.updatePassword_from_dashboard = async (req, res, next) => {
   try{ 
     const { body } = req;
@@ -580,6 +585,7 @@ exports.updatePassword_from_dashboard = async (req, res, next) => {
   
 }
 
+//find and save word meaning
 exports.search_api = async (req, res, next) => {
    try{
     const {body} = req
@@ -693,6 +699,8 @@ exports.search_api = async (req, res, next) => {
 
 }
 
+
+//get json of meanings saved in database
 exports.search_api_get = async (req, res, next) => {
 
   try{  
@@ -706,7 +714,7 @@ exports.search_api_get = async (req, res, next) => {
      
     }else{
         let exact_word = String(user_keyword).replaceAll('-',' ')
-        const [ rows ] = await db.execute(`select * from T_Searches where word = ? and search_user = ?`,[exact_word,user_id])
+        const [ rows ] = await db.query(`select * from T_Searches where word = ? and search_user = ?`,[exact_word,user_id])
         if (rows.length > 0){
      
             res.status(200).json({"user search word(s)":rows[0].word,"api_meaning":JSON.parse(rows[0].meaning)})
@@ -724,8 +732,6 @@ exports.search_api_get = async (req, res, next) => {
 }
 
 exports.chrome_extension_user_state = async function(req,res,next){
-
- 
   try{  
     logged_in_user = await loggedUser(req)
     if(logged_in_user != null){
